@@ -40,12 +40,14 @@ class System():
         app.config['UPLOAD_FOLDER'] = FOLDER
 
     def site(self):
+        os.chdir(self.currentFolder)
         if 'templates' not in os.listdir():
             os.mkdir('templates')
             os.chdir('templates')
             with open('main.html', 'w+') as file:
                 file.write(self.html)
                 file.close()
+        os.chdir('..')
 
     def getip(self):
         import netifaces
@@ -55,6 +57,7 @@ class System():
         return address
 
     def gmf(self):
+        os.chdir(self.currentFolder)
         if 'Multiverse folder' in os.listdir():
             os.chdir('Multiverse folder')
             f = os.listdir()
@@ -90,7 +93,7 @@ def download():
     return send_file(file, as_attachment=True)
 
 
-@app.route('/<f>')
+@app.route('/files/<f>')
 def filedownload(f):
     fd = os.path.join(System().currentFolder, app.config['UPLOAD_FOLDER'], f)
     return send_file(fd, as_attachment=True)
@@ -99,6 +102,5 @@ def filedownload(f):
 sys = System()
 sys.site()
 ip = sys.getip()
-
 
 app.run(host=ip)
